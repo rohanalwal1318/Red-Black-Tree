@@ -39,6 +39,9 @@ void rightRotate(Node* x, Tree *t);
 /* Fix insert a function or rather a loop untill the parent is RED */
 void fixInsert(Tree *t, Node *newnode);
 
+/* Fix the extra black (double black) left behind after deleting a BLACK node */
+void fixDelete(Tree *t, Node *x);
+
 /* Insertion of node in RBT */
 int insert(int data, Tree *t);
 
@@ -53,6 +56,12 @@ Pair findMax(Tree *t);
 
 /* Find the minimum node in tree */
 Pair findMin(Tree *t);
+
+/* Deletes the maximum node present in the tree */
+void deleteMax(Tree *t);
+
+/* Deletes the minimum node present in the tree */
+void deleteMin(Tree *t);
 
 /* Print the tree in-order */
 void inorder(Node *root, Tree *t);

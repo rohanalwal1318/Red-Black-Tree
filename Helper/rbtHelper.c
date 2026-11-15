@@ -127,6 +127,95 @@ void fixInsert(Tree *t, Node *newnode){
 }
 
 
+/* x is carrying an extra black (double black), keep fixing till it is gone */
+void fixDelete(Tree *t, Node *x){
+
+  Node *s; /* sibling of x */
+
+  while(x != t->root && x->color == BLACK){
+
+    if(x == x->parent->left){  /* x is a LEFT child */
+
+      s = x->parent->right;
+
+      /* Case 1 - sibling is RED: rotate so that the sibling becomes BLACK */
+      if(s->color == RED){
+        s->color = BLACK;
+        x->parent->color = RED;
+        leftRotate(x->parent, t);
+        s = x->parent->right;  /* new sibling */
+      }
+
+      /* Case 2 - sibling BLACK and both its children BLACK: push the extra black up */
+      if(s->left->color == BLACK && s->right->color == BLACK){
+        s->color = RED;
+        x = x->parent;
+      }
+      else{
+
+        /* Case 3 - near child RED, far child BLACK: rotate the sibling to make it a Case 4 */
+        if(s->right->color == BLACK){
+          s->left->color = BLACK;
+          s->color = RED;
+          rightRotate(s, t);
+          s = x->parent->right;
+        }
+
+        /* Case 4 - far child RED: rotate at parent and recolour, extra black is gone */
+        s->color = x->parent->color;
+        x->parent->color = BLACK;
+        s->right->color = BLACK;
+        leftRotate(x->parent, t);
+        x = t->root;  /* done, come out of the loop */
+
+      }
+
+    }
+    else{  /* x is a RIGHT child, same as above with left and right swapped */
+
+      s = x->parent->left;
+
+      /* Case 1 */
+      if(s->color == RED){
+        s->color = BLACK;
+        x->parent->color = RED;
+        rightRotate(x->parent, t);
+        s = x->parent->left;
+      }
+
+      /* Case 2 */
+      if(s->left->color == BLACK && s->right->color == BLACK){
+        s->color = RED;
+        x = x->parent;
+      }
+      else{
+
+        /* Case 3 */
+        if(s->left->color == BLACK){
+          s->right->color = BLACK;
+          s->color = RED;
+          leftRotate(s, t);
+          s = x->parent->left;
+        }
+
+        /* Case 4 */
+        s->color = x->parent->color;
+        x->parent->color = BLACK;
+        s->left->color = BLACK;
+        rightRotate(x->parent, t);
+        x = t->root;
+
+      }
+
+    }
+
+  }
+
+  /* If x is RED it just turns BLACK (extra black absorbed), also keeps the root BLACK */
+  x->color = BLACK;
+
+}
+
 /* Returns NULL if failed to allocate memory, else return newnode with default values */
 Node *createNode(int data, Tree *t){
 
